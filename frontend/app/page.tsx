@@ -70,14 +70,12 @@ const datos = {
 export default function Home(){
 
 const [modulo,setModulo]=useState("Inicio");
-const [busqueda,setBusqueda]=useState("");
+const [buscar,setBuscar]=useState("");
 
-const menus=Object.keys(datos);
-
-const filtrados=
-menus.filter(item=>
-item.toLowerCase()
-.includes(busqueda.toLowerCase())
+const modulos=
+Object.keys(datos).filter(x=>
+x.toLowerCase()
+.includes(buscar.toLowerCase())
 );
 
 const info=
@@ -86,12 +84,9 @@ datos[modulo as keyof typeof datos];
 
 function descargar(){
 
-const contenido=
-JSON.stringify(info,null,2);
-
 const blob=
 new Blob(
-[contenido],
+[JSON.stringify(info,null,2)],
 {type:"text/plain"}
 );
 
@@ -103,23 +98,29 @@ document.createElement("a");
 
 a.href=url;
 a.download=`${modulo}.txt`;
-
 a.click();
-
-URL.revokeObjectURL(url);
 
 }
 
+
 return(
 
-<div className="flex flex-col md:flex-row min-h-screen bg-slate-200">
+<div className="flex flex-col lg:flex-row min-h-screen bg-slate-200">
 
 
 {/* MENU */}
 
-<aside className="w-full md:w-72 bg-blue-950 text-white p-6">
+<aside className="
 
-<h1 className="text-3xl font-bold">
+w-full
+lg:w-72
+bg-blue-950
+text-white
+p-6
+
+">
+
+<h1 className="text-4xl font-bold">
 
 🚧 Obras Públicas
 
@@ -132,15 +133,12 @@ Envigado
 </p>
 
 
-
 <input
 
-value={busqueda}
+value={buscar}
 
 onChange={(e)=>
-
-setBusqueda(e.target.value)
-
+setBuscar(e.target.value)
 }
 
 placeholder="Buscar módulo..."
@@ -148,11 +146,11 @@ placeholder="Buscar módulo..."
 className="
 
 w-full
-bg-white
-text-slate-900
-rounded-lg
-p-3
 mt-8
+p-3
+rounded-lg
+text-slate-900
+bg-white
 
 "
 
@@ -160,27 +158,45 @@ mt-8
 
 
 
-<div className="flex flex-col gap-2 mt-8">
+<div className="mt-8 flex flex-col gap-2">
 
 {
 
-filtrados.map(item=>(
+modulos.map(item=>(
 
-<Menu
+<button
 
 key={item}
 
-titulo={item}
+onClick={()=>setModulo(item)}
 
-activo={modulo===item}
+className={`
 
-click={()=>
+p-4
+rounded-lg
+text-left
 
-setModulo(item)
+${
+
+modulo===item
+
+?
+
+"bg-blue-700"
+
+:
+
+"hover:bg-blue-800"
 
 }
 
-/>
+`}
+
+>
+
+{item}
+
+</button>
 
 ))
 
@@ -194,14 +210,15 @@ setModulo(item)
 
 {/* CONTENIDO */}
 
-<section className="flex-1 p-6">
+<section className="flex-1 p-5 md:p-8">
+
 
 <div className="
 flex
 flex-col
 md:flex-row
 justify-between
-gap-4
+gap-5
 ">
 
 <div>
@@ -234,10 +251,9 @@ className="
 
 bg-blue-900
 text-white
-rounded-lg
 px-8
 py-4
-hover:bg-blue-700
+rounded-lg
 
 "
 
@@ -251,14 +267,16 @@ Descargar reporte
 
 
 
-{/* KPI */}
+{/* TARJETAS */}
 
 <div className="
+
 grid
 grid-cols-2
-lg:grid-cols-4
+xl:grid-cols-4
 gap-5
 mt-10
+
 ">
 
 <Card
@@ -285,22 +303,25 @@ valor={info.terminadas}
 
 
 
+
 {/* TABLA */}
 
 <div className="
+
 bg-white
 rounded-xl
 shadow
 p-6
 mt-10
 overflow-x-auto
+
 ">
 
 <h2 className="
 text-3xl
 font-bold
 text-slate-900
-mb-6
+mb-8
 ">
 
 Últimos indicadores
@@ -311,29 +332,48 @@ mb-6
 <table className="
 w-full
 min-w-[500px]
-text-slate-800
 ">
 
 <thead>
 
 <tr className="
 border-b
-font-bold
+text-slate-900
 ">
 
-<th className="text-left p-2">
+<th className="
+
+text-left
+p-3
+font-bold
+
+">
 
 Módulo
 
 </th>
 
-<th className="text-left p-2">
+
+<th className="
+
+text-left
+p-3
+font-bold
+
+">
 
 Meta
 
 </th>
 
-<th className="text-left p-2">
+
+<th className="
+
+text-left
+p-3
+font-bold
+
+">
 
 Avance
 
@@ -354,13 +394,12 @@ info.tabla.map(
 (item,index)=>(
 
 <tr
+
 key={index}
 
 className="
-
 border-b
 text-slate-700
-
 "
 
 >
@@ -407,54 +446,6 @@ text-slate-700
 
 
 
-function Menu({
-
-titulo,
-click,
-activo
-
-}:any){
-
-return(
-
-<button
-
-onClick={click}
-
-className={`
-
-p-4
-rounded-lg
-text-left
-transition
-
-${
-activo
-
-?
-
-"bg-blue-700"
-
-:
-
-"hover:bg-blue-800"
-
-}
-
-`}
-
->
-
-{titulo}
-
-</button>
-
-)
-
-}
-
-
-
 function Card({
 
 titulo,
@@ -473,7 +464,6 @@ p-6
 
 <p className="
 text-slate-500
-text-sm
 ">
 
 {titulo}
@@ -484,7 +474,6 @@ text-sm
 text-5xl
 font-bold
 text-slate-900
-mt-2
 ">
 
 {valor}
