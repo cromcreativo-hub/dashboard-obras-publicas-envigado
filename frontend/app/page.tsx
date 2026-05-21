@@ -3,96 +3,107 @@
 import { useState } from "react";
 
 const datos = {
-Inicio:{
-indicadores:120,
-metas:48,
-obras:21,
-terminadas:93,
-tabla:[
-["Malla vial","1200 ton","80%"],
-["Andenes","15 sectores","65%"]
-]
-},
+  Inicio:{
+    indicadores:120,
+    metas:48,
+    obras:21,
+    terminadas:93,
+    tabla:[
+      ["Malla vial","1200 ton","80%"],
+      ["Andenes","15 sectores","65%"]
+    ]
+  },
 
-Indicadores:{
-indicadores:320,
-metas:80,
-obras:40,
-terminadas:100,
-tabla:[
-["Indicadores activos","320","95%"],
-["Metas","80","70%"]
-]
-},
+  Indicadores:{
+    indicadores:320,
+    metas:80,
+    obras:40,
+    terminadas:100,
+    tabla:[
+      ["Indicadores activos","320","95%"],
+      ["Metas","80","70%"]
+    ]
+  },
 
-"Malla vial":{
-indicadores:90,
-metas:1200,
-obras:12,
-terminadas:40,
-tabla:[
-["Parcheo","1200 ton","80%"],
-["Repavimentación","8 sectores","60%"]
-]
-},
+  "Malla vial":{
+    indicadores:90,
+    metas:1200,
+    obras:12,
+    terminadas:40,
+    tabla:[
+      ["Parcheo","1200 ton","80%"],
+      ["Repavimentación","8 sectores","60%"]
+    ]
+  },
 
-Andenes:{
-indicadores:45,
-metas:15,
-obras:5,
-terminadas:8,
-tabla:[
-["Andenes priorizados","15","65%"]
-]
-},
+  Andenes:{
+    indicadores:45,
+    metas:15,
+    obras:5,
+    terminadas:8,
+    tabla:[
+      ["Andenes priorizados","15","65%"]
+    ]
+  },
 
-Subsidios:{
-indicadores:400,
-metas:350,
-obras:0,
-terminadas:0,
-tabla:[
-["Subsidios vivienda","400","90%"]
-]
-},
+  Subsidios:{
+    indicadores:400,
+    metas:350,
+    obras:0,
+    terminadas:0,
+    tabla:[
+      ["Subsidios vivienda","400","90%"]
+    ]
+  },
 
-Reportes:{
-indicadores:12,
-metas:12,
-obras:12,
-terminadas:12,
-tabla:[
-["Reportes","12","100%"]
-]
-}
+  Reportes:{
+    indicadores:12,
+    metas:12,
+    obras:12,
+    terminadas:12,
+    tabla:[
+      ["Reportes generados","12","100%"]
+    ]
+  }
 };
 
 export default function Home(){
 
 const [modulo,setModulo]=useState("Inicio");
 const [busqueda,setBusqueda]=useState("");
-const [menu,setMenu]=useState(false);
 
-const info=datos[modulo as keyof typeof datos];
+const menus=Object.keys(datos);
 
-const modulos=Object.keys(datos).filter(
-m=>m.toLowerCase()
+const filtrados=
+menus.filter(item=>
+item.toLowerCase()
 .includes(busqueda.toLowerCase())
 );
 
+const info=
+datos[modulo as keyof typeof datos];
+
+
 function descargar(){
 
-const blob=new Blob(
-[JSON.stringify(info,null,2)],
+const contenido=
+JSON.stringify(info,null,2);
+
+const blob=
+new Blob(
+[contenido],
 {type:"text/plain"}
 );
 
-const url=URL.createObjectURL(blob);
+const url=
+URL.createObjectURL(blob);
 
-const a=document.createElement("a");
+const a=
+document.createElement("a");
 
 a.href=url;
 a.download=`${modulo}.txt`;
+
 a.click();
 
 URL.revokeObjectURL(url);
@@ -103,46 +114,12 @@ return(
 
 <div className="flex flex-col md:flex-row min-h-screen bg-slate-200">
 
-{/* MENU MOVIL */}
 
-<div className="
-md:hidden
-bg-blue-950
-text-white
-flex
-justify-between
-items-center
-p-4
-">
+{/* MENU */}
 
-<h1>🚧 Obras Públicas</h1>
+<aside className="w-full md:w-72 bg-blue-950 text-white p-6">
 
-<button
-onClick={()=>setMenu(!menu)}
->
-☰
-</button>
-
-</div>
-
-
-
-{/* SIDEBAR */}
-
-<aside className={`
-
-bg-blue-950
-text-white
-p-6
-md:w-72
-
-${menu ? "block":"hidden"}
-
-md:block
-
-`}>
-
-<h1 className="text-4xl font-bold">
+<h1 className="text-3xl font-bold">
 
 🚧 Obras Públicas
 
@@ -172,7 +149,7 @@ className="
 
 w-full
 bg-white
-text-black
+text-slate-900
 rounded-lg
 p-3
 mt-8
@@ -187,31 +164,25 @@ mt-8
 
 {
 
-modulos.map(
-
-m=>(
+filtrados.map(item=>(
 
 <Menu
 
-key={m}
+key={item}
 
-titulo={m}
+titulo={item}
 
-activo={modulo===m}
+activo={modulo===item}
 
-click={()=>{
+click={()=>
 
-setModulo(m);
+setModulo(item)
 
-setMenu(false);
-
-}}
+}
 
 />
 
-)
-
-)
+))
 
 }
 
@@ -223,27 +194,23 @@ setMenu(false);
 
 {/* CONTENIDO */}
 
-<section className="flex-1 p-6 md:p-8">
+<section className="flex-1 p-6">
 
 <div className="
-
 flex
 flex-col
 md:flex-row
 justify-between
 gap-4
-
 ">
 
 <div>
 
 <h1 className="
-
 text-5xl
 md:text-7xl
 font-bold
 text-slate-900
-
 ">
 
 {modulo}
@@ -259,7 +226,6 @@ Secretaría Obras Públicas Envigado
 </div>
 
 
-
 <button
 
 onClick={descargar}
@@ -268,11 +234,10 @@ className="
 
 bg-blue-900
 text-white
+rounded-lg
 px-8
 py-4
-rounded-lg
-w-full
-md:w-auto
+hover:bg-blue-700
 
 "
 
@@ -286,23 +251,35 @@ Descargar reporte
 
 
 
-{/* KPIS */}
+{/* KPI */}
 
 <div className="
-
 grid
-grid-cols-1
-sm:grid-cols-2
+grid-cols-2
 lg:grid-cols-4
-gap-6
+gap-5
 mt-10
-
 ">
 
-<Card titulo="Indicadores" valor={info.indicadores}/>
-<Card titulo="Metas" valor={info.metas}/>
-<Card titulo="Obras" valor={info.obras}/>
-<Card titulo="Terminadas" valor={info.terminadas}/>
+<Card
+titulo="Indicadores"
+valor={info.indicadores}
+/>
+
+<Card
+titulo="Metas"
+valor={info.metas}
+/>
+
+<Card
+titulo="Obras"
+valor={info.obras}
+/>
+
+<Card
+titulo="Terminadas"
+valor={info.terminadas}
+/>
 
 </div>
 
@@ -311,21 +288,19 @@ mt-10
 {/* TABLA */}
 
 <div className="
-
 bg-white
 rounded-xl
 shadow
-p-8
+p-6
 mt-10
-
+overflow-x-auto
 ">
 
 <h2 className="
-
 text-3xl
 font-bold
 text-slate-900
-
+mb-6
 ">
 
 Últimos indicadores
@@ -333,25 +308,35 @@ text-slate-900
 </h2>
 
 
-
-<div className="overflow-x-auto">
-
-<table className="w-full mt-8">
+<table className="
+w-full
+min-w-[500px]
+text-slate-800
+">
 
 <thead>
 
-<tr className="border-b">
+<tr className="
+border-b
+font-bold
+">
 
-<th className="text-left py-4 text-slate-900">
+<th className="text-left p-2">
+
 Módulo
+
 </th>
 
-<th className="text-left py-4 text-slate-900">
+<th className="text-left p-2">
+
 Meta
+
 </th>
 
-<th className="text-left py-4 text-slate-900">
+<th className="text-left p-2">
+
 Avance
+
 </th>
 
 </tr>
@@ -370,19 +355,32 @@ info.tabla.map(
 
 <tr
 key={index}
-className="border-b"
+
+className="
+
+border-b
+text-slate-700
+
+"
+
 >
 
-<td className="py-4 text-slate-700">
+<td className="p-3">
+
 {item[0]}
+
 </td>
 
-<td className="py-4 text-slate-700">
+<td className="p-3">
+
 {item[1]}
+
 </td>
 
-<td className="py-4 text-slate-700">
+<td className="p-3">
+
 {item[2]}
+
 </td>
 
 </tr>
@@ -396,8 +394,6 @@ className="border-b"
 </tbody>
 
 </table>
-
-</div>
 
 </div>
 
@@ -430,9 +426,9 @@ className={`
 p-4
 rounded-lg
 text-left
+transition
 
 ${
-
 activo
 
 ?
@@ -469,26 +465,26 @@ valor
 return(
 
 <div className="
-
 bg-white
 rounded-xl
 shadow
 p-6
-
 ">
 
-<p className="text-slate-500">
+<p className="
+text-slate-500
+text-sm
+">
 
 {titulo}
 
 </p>
 
 <h2 className="
-
 text-5xl
 font-bold
 text-slate-900
-
+mt-2
 ">
 
 {valor}
